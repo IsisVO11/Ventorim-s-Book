@@ -18,25 +18,6 @@
    <link rel="stylesheet" href="css/admin_style.css">
    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-   <script type="text/javascript">
-     google.charts.load("current", {packages:["corechart"]});
-     google.charts.setOnLoadCallback(drawChart);
-    function drawChart() {
-      var jsonData = $.ajax({
-          url: "fetch_data.php",
-          dataType: "json",
-          async: false
-          }).responseText;
-      var data = new google.visualization.DataTable(jsonData);
-      var options = {
-        title: 'Gêneros Mais Vendidos',
-        legend: 'none',
-        pieSliceText: 'label',
-        pieStartAngle: 100,
-      };
-      var chart = new google.visualization.PieChart(document.getElementById('piechart'));
-      chart.draw(data, options); }
-  </script>
 </head>
 <body>
  <?php include 'admin_header.php'; ?>
@@ -121,98 +102,43 @@
        </div>
 
        <div id="chart_div" style="width: 100%; height: 100%;"> -- Codigo do grafico barras
-    <canvas id="myChart"></canvas>
-    <?php
-    $query = "SELECT c.name AS product_name, SUM(c.quantity) AS total_sold
-              FROM cart c
-              GROUP BY c.name";
-    $result = mysqli_query($conn, $query);
-    $data = array();
-    while ($row = mysqli_fetch_assoc($result)) {
-        $data[$row['product_name']] = $row['total_sold'];
-    }
-    ?>
-    <script>
-        var ctx = document.getElementById('myChart').getContext('2d');
-        var myChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: <?php echo json_encode(array_keys($data)); ?>,
-                datasets: [{
-                    label: 'Produtos nos carrinhos',
-                    data: <?php echo json_encode(array_values($data)); ?>,
-                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-    </script>
-</div>
-
-
-<div id="piechart" style="width: 900px; height: 500px;">-- Codigo grafico pizza
-<?php
-$query = "SELECT p.genre, SUM(o.quantity) AS total_quantity 
-FROM orders o 
-JOIN product p ON o.product_id = p.id 
-GROUP BY p.genre 
-ORDER BY total_quantity DESC";
-$result = mysqli_query($conn, $query);
-$data = array();
-$data[] = ['Genre', 'Quantidade'];
-while ($row = mysqli_fetch_assoc($result)) {
-    $data[] = [$row['genre'], (int) $row['total_quantity']];
-}
-echo json_encode($data);
-?> </div>
-
-
-<div id="chart_div" style="width: 900px; height: 500px;"> -- codigo grafico linha
-<script type="text/javascript">
-        google.charts.load('current', {'packages':['corechart']});
-        google.charts.setOnLoadCallback(drawChart);
-
-        function drawChart() {
-            var data = new google.visualization.DataTable();
-            data.addColumn('string', 'Data');
-            data.addColumn('number', 'Vendas');
-            data.addRows(<?php echo json_encode($data); ?>);
-
-            var options = {
-                title: 'Vendas dos Produtos por Período',
-                curveType: 'function',
-                legend: { position: 'bottom' }
-            };
-
-            var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-
-            chart.draw(data, options);
-        }
-    </script>
-<?php
-$query = "SELECT DATE(placed_on) AS data_pedido, COUNT(*) AS total_pedidos 
-          FROM orders 
-          GROUP BY DATE(placed_on) 
-          ORDER BY DATE(placed_on)";
-$result = mysqli_query($conn, $query);
-$data = array();
-$data[] = ['Data Pedido', 'Total Pedidos'];
-while ($row = mysqli_fetch_assoc($result)) {
-    $data[] = [$row['data_pedido'], (int) $row['total_pedidos']];
-}
-echo json_encode($data);
-?>
-</div>
+           <canvas id="myChart"></canvas>
+           <?php
+              $query = "SELECT c.name AS product_name, SUM(c.quantity) AS total_sold
+                 FROM cart c
+                 GROUP BY c.name";
+              $result = mysqli_query($conn, $query);
+              $data = array();
+              while ($row = mysqli_fetch_assoc($result)) {
+                $data[$row['product_name']] = $row['total_sold'];
+               }
+            ?>
+          <script>
+              var ctx = document.getElementById('myChart').getContext('2d');
+              var myChart = new Chart(ctx, {
+                 type: 'bar',
+                 data: {
+                   labels: <?php echo json_encode(array_keys($data)); ?>,
+                    datasets: [{
+                      label: 'Produtos nos carrinhos',
+                      data: <?php echo json_encode(array_values($data)); ?>,
+                      backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                      borderColor: 'rgba(54, 162, 235, 1)',
+                      borderWidth: 1
+                     }]
+                  },
+                 options: {
+                   scales: {
+                       y: {
+                         beginAtZero: true
+                        }
+                     }
+                  }
+               });
+          </script>
+       </div>
     </div>
  </section>
- <script src="js/admin_script.js"></script>
+   <script src="js/admin_script.js"></script>
 </body>
 </html>
