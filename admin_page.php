@@ -101,7 +101,7 @@
           <p>Novas Mensagens</p>
        </div>
 
-       <div id="chart_div" style="width: 100%; height: 100%;"> -- Codigo do grafico barras
+       <div id="chart_div" style="width: 100%; height: 100%;">
            <canvas id="myChart"></canvas>
            <?php
               $query = "SELECT c.name AS product_name, SUM(c.quantity) AS total_sold

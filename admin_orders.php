@@ -35,8 +35,10 @@
     <div class="box-container">
        <?php
           $select_orders = mysqli_query($conn, "SELECT * FROM `orders`") or die('query failed');
+          $addresses = [];
           if(mysqli_num_rows($select_orders) > 0){
              while($fetch_orders = mysqli_fetch_assoc($select_orders)){
+               $addresses[] = $fetch_orders['address'];
                 ?>
                 <div class="box">
                    <p> ID Utilizador : <span><?php echo $fetch_orders['user_id']; ?></span> </p>
@@ -67,6 +69,49 @@
          ?>
      </div>
   </section>
+  <div id="map" style="height: 500px; width: 100%; margin-top: 50px;"></div>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA2clHe-6walaNSX7JyMkrhXhg7EsCly0A"></script>
+  <script>
+    function initMap() {
+       var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 10,
+          center: {lat: -23.55052, lng: -46.633308}  // Centro inicial do mapa (por exemplo, São Paulo)
+        });
+        var geocoder = new google.maps.Geocoder();
+        var bounds = new google.maps.LatLngBounds();
+       <?php foreach ($addresses as $address) { ?>
+          geocodeAddress(geocoder, map, bounds, "<?php echo $address; ?>");
+       <?php } ?>
+      }
+
+     function geocodeAddress(geocoder, resultsMap, bounds, address) {
+       geocoder.geocode({'address': address}, function(results, status) {
+           if (status === 'OK') {
+              var marker = new google.maps.Marker({
+                map: resultsMap,
+                position: results[0].geometry.location
+               });
+               bounds.extend(results[0].geometry.location);
+               resultsMap.fitBounds(bounds);
+               var infoWindow = new google.maps.InfoWindow({
+                content: address
+              });
+              marker.addListener('mouseover', function() {
+                infoWindow.open(resultsMap, marker);
+              });
+              marker.addListener('mouseout', function() {
+                infoWindow.close();
+              });
+           } else {
+              console.log('Mapa não foi bem-sucedido devido a: ' + status);
+            }
+         });
+      }
+     // Inicia o mapa após o carregamento da página
+     document.addEventListener("DOMContentLoaded", function() {
+       initMap();
+      });
+  </script>
   <script src="js/admin_script.js"></script>
 </body>
 </html>
