@@ -70,7 +70,7 @@
      </div>
   </section>
   <div id="map" style="height: 500px; width: 100%; margin-top: 50px;"></div>
-  <script src="https://maps.googleapis.com/maps/api/js?key=mykey"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA2clHe-6walaNSX7JyMkrhXhg7EsCly0A"></script>
   <script>
     function initMap() {
        var map = new google.maps.Map(document.getElementById('map'), {
