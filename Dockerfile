@@ -1,3 +1,13 @@
-FROM mysql/mysql-server:8.0.24
+# Use a imagem base do Render
+FROM render/base:1
 
-COPY config/user.cnf /etc/mysql/my.cnf
+# Copie o arquivo docker.yml para o contêiner
+COPY docker-compose.yml /path/to/docker-compose.yml
+
+# Adicione comandos para configurar a conectividade com a base de dados
+# Exemplo: instalar drivers, definir variáveis de ambiente, etc.
+
+# Comandos adicionais conforme necessário
+
+# Defina o comando de inicialização do contêiner
+CMD ["python", "app.py"]
